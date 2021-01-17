@@ -1,42 +1,47 @@
 import './App.css';
 import Card from 'react-bootstrap/Card';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import firebase from './firebase';
 
 function CardDisplay() {
+  const missions = ['First Steps', 'Family Familiarity', 'Animal Info', 'Animal Addition', 'Modern Major']
+  const missionVals = []
+  for (let id in missions) {
+    const missionRef = firebase.database().ref(missions[id]);
+    missionRef.on('value', (snapshot) => {
+    missionVals.push(snapshot.val());
+  })
+  }
+
+
   return [
     "Primary",
     "Secondary",
     "Success",
-    "Danger",
-    "Warning",
-    "Info",
-    "Light",
     "Dark",
+    "Info"
   ].map((variant, idx) => (
     <Card 
       bg={variant.toLowerCase()}
       key={idx}
       text={variant.toLowerCase() === "light" ? "dark" : "white"}
       style={{ width: "18rem" }}
-      className="mb-2"
+      className="mb-5"
     >
       
-      <Card.Header>Header</Card.Header>
+      <Card.Header>Mission {idx+1}</Card.Header>
       <Card.Body>
-        <Card.Title>{variant} Card Title </Card.Title>
-        <Card.Text>
-          Card Text
-        </Card.Text>
+        <Card.Title>{missions[idx]} </Card.Title>
+        <Card.Text> {missionVals[idx]} </Card.Text>
       </Card.Body>
     </Card>
   ));
 }
-function App() {
+
+export default function App() {
   return (
     <div className="cards">
       <CardDisplay />
     </div>
   );
 }
-
-export default App;
